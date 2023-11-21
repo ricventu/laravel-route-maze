@@ -1,6 +1,6 @@
 <?php
 
-namespace Ricventu\RouteMaze\Testing\Controllers\Test7;
+namespace Ricventu\RouteMaze\Tests\Controllers\Test7;
 
 use Illuminate\Http\Request;
 

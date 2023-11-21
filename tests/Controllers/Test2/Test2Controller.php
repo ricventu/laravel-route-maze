@@ -1,6 +1,6 @@
 <?php
 
-namespace Ricventu\RouteMaze\Testing\Controllers\Test2;
+namespace Ricventu\RouteMaze\Tests\Controllers\Test2;
 
 class Test2Controller
 {

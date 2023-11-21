@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use function PHPUnit\Framework\assertEquals;
 
 it('level3', function () {
-    Route::maze(__DIR__.'/../src/Testing/Controllers/Test6', 'Ricventu\\RouteMaze\\Testing\\Controllers\\Test6');
+    Route::maze(__DIR__.'/Controllers/Test6', 'Ricventu\\RouteMaze\\Tests\\Controllers\\Test6');
     assertEquals('/test4/test5', route('test4.test5', absolute: false));
     $this->get(route('test4.test5'))->assertSee('Test5Controller@index');
     assertEquals('/test4/test5/show', route('test4.test5.show', absolute: false));
