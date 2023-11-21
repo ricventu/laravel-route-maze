@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Ricventu\RouteMaze\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class RouteMazeCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'laravel-route-maze';
 
     public $description = 'My command';
 
