@@ -4,6 +4,7 @@ namespace Ricventu\RouteMaze;
 
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use ReflectionClass;
 use ReflectionMethod;
@@ -12,10 +13,10 @@ class RouteMaze
 {
     public function maze(string $directory, string $namespace)
     {
-        $this->registerRoutes($directory, $namespace);
+        $this->registerRoutes($directory, $namespace, collect());
     }
 
-    protected function registerRoutes(string $directory, string $namespace): void
+    protected function registerRoutes(string $directory, string $namespace, Collection $pathParameters): void
     {
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
@@ -27,16 +28,26 @@ class RouteMaze
         $namespace = str($namespace);
 
         foreach ($filesystem->directories($directory) as $subDirectory) {
+            $name = str(basename($subDirectory));
 
-            $name = str(basename($subDirectory))->snake('-');
-            Route::name($name . '.')
-                ->prefix($name)
-                ->group(function () use ($subDirectory, $namespace) {
-                    $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)));
-                });
+            if ($name->startsWith('_') && $name->endsWith('_')) {
+                $parameterName = $name->between('_', '_');
+                $pathParameters->push($parameterName);
+                Route::prefix("{" . $parameterName . "}")
+                    ->group(function () use ($subDirectory, $namespace, $pathParameters) {
+                       $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                    });
+            } else {
+                $name = $name->snake('-');
+                Route::name($name . '.')
+                    ->prefix($name)
+                    ->group(function () use ($subDirectory, $namespace, $pathParameters) {
+                        $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                    });
+            }
         }
 
-        foreach ($filesystem->allFiles($directory) as $file) {
+        foreach ($filesystem->files($directory) as $file) {
             $class = (string)$namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
@@ -78,12 +89,12 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is('__invoke')) {
-                    $route = Route::get($routePath->append($this->getParameters($method))->value(), $class);
+                    $route = Route::get($routePath->append($this->getParameters($method, $pathParameters))->value(), $class);
                     if ($routeName->isNotEmpty()) {
                         $route->name($routeName->value());
                     }
                 } elseif ($methodName->is('index')) {
-                    $route = Route::get($routePath->append($this->getParameters($method))->value(), [$class, 'index']);
+                    $route = Route::get($routePath->append($this->getParameters($method, $pathParameters))->value(), [$class, 'index']);
                     if ($routeName->isNotEmpty()) {
                         $route->name($routeName->value());
                     }
@@ -98,7 +109,7 @@ class RouteMaze
                                 $path = $routePath->append('/', $name);
                             }
                             Route::$action(
-                                $path->append($this->getParameters($method))->value(),
+                                $path->append($this->getParameters($method, $pathParameters))->value(),
                                 [$class, $methodName->value()]
                             )
                                 ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
@@ -109,7 +120,7 @@ class RouteMaze
         }
     }
 
-    public function getParameters(ReflectionMethod $method)
+    public function getParameters(ReflectionMethod $method, Collection $pathParameters)
     {
         $parameters = str('');
         foreach ($method->getParameters() as $parameter) {
@@ -119,6 +130,9 @@ class RouteMaze
                 $parameterType = $parameterType->getName();
             }
             if ($parameterType === Request::class) {
+                continue;
+            }
+            if ($pathParameters->contains($parameterName)) {
                 continue;
             }
             $parameters = $parameters->append('/{', $parameterName, '}');

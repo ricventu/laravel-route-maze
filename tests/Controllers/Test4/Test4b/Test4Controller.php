@@ -1,8 +1,8 @@
 <?php
 
-namespace Ricventu\RouteMaze\Tests\Controllers\Test4\Test5;
+namespace Ricventu\RouteMaze\Tests\Controllers\Test4\Test4b;
 
-class Test5Controller
+class Test4Controller
 {
     public function index()
     {
