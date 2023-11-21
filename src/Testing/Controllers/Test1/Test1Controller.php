@@ -8,5 +8,4 @@ class Test1Controller
     {
         return class_basename(static::class);
     }
-
 }
