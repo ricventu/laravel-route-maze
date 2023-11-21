@@ -20,6 +20,7 @@ class RouteMaze
 
     protected function registerRoutes(string $directory, string $namespace): void
     {
+        /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
 
         if (!$filesystem->exists($directory)) {
@@ -29,7 +30,6 @@ class RouteMaze
         $namespace = str($namespace);
 
         foreach ($filesystem->allFiles($directory) as $file) {
-
             $class = (string)$namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
@@ -81,6 +81,16 @@ class RouteMaze
                     $this->addAction($methodName, $routeName, $class, 'delete');
                 }
             }
+        }
+
+        foreach ($filesystem->directories($directory) as $subDirectory) {
+
+            $name = str(basename($subDirectory))->snake('-');
+            Route::name($name . '.')
+                ->prefix($name)
+                ->group(function () use ($directory, $subDirectory, $namespace) {
+                    $this->registerRoutes($subDirectory, $namespace->append('\\',basename($subDirectory)));
+                });
         }
     }
 
