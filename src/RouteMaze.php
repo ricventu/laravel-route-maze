@@ -35,7 +35,7 @@ class RouteMaze
                 $pathParameters->push($parameterName);
                 Route::prefix("{" . $parameterName . "}")
                     ->group(function () use ($subDirectory, $namespace, $pathParameters) {
-                       $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                        $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
                     });
             } else {
                 $name = $name->snake('-');
@@ -52,6 +52,10 @@ class RouteMaze
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
+            if (!str($class)->endsWith('Controller')) {
+                continue;
+            }
+
             if (!class_exists($class)) {
                 continue;
             }
@@ -60,7 +64,6 @@ class RouteMaze
             if ($reflection->isAbstract()) {
                 continue;
             }
-
             if (
                 method_exists($class, 'mazeDisabled') &&
                 (!$class::makeDisabled())
@@ -68,18 +71,8 @@ class RouteMaze
                 continue;
             }
 
-            if (method_exists($class, 'mazeName')) {
-                $routeName = str($class::mazeName());
-            } else {
-                $routeName = str($class)->afterLast('\\')->replace('Controller', '')->snake('-');
-            }
-            if (method_exists($class, 'mazePath')) {
-                $routePath = str($class::mazeName());
-            } else {
-                $routePath = str($class)->afterLast('\\')->replace('Controller', '')->snake('-');
-            }
-
-            $routePath = $routeName->isNotEmpty() ? $routePath : $routePath->beforeLast('/');
+            $routeName = str($class)->afterLast('\\')->replace('Controller', '')->snake('-');
+            $routePath = str($routeName);
 
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_STATIC) as $method) {
                 if ($method->isConstructor()) {
@@ -89,14 +82,14 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is('__invoke')) {
-                    $route = Route::get($routePath->append($this->getParameters($method, $pathParameters))->value(), $class);
+                    $route = Route::get((string)$routePath->append($this->getParameters($method, $pathParameters)), $class);
                     if ($routeName->isNotEmpty()) {
-                        $route->name($routeName->value());
+                        $route->name((string)$routeName);
                     }
                 } elseif ($methodName->is('index')) {
-                    $route = Route::get($routePath->append($this->getParameters($method, $pathParameters))->value(), [$class, 'index']);
+                    $route = Route::get((string)$routePath->append($this->getParameters($method, $pathParameters)), [$class, 'index']);
                     if ($routeName->isNotEmpty()) {
-                        $route->name($routeName->value());
+                        $route->name((string)$routeName);
                     }
                 } else {
                     foreach (['get', 'post', 'delete'] as $action) {
@@ -109,8 +102,8 @@ class RouteMaze
                                 $path = $routePath->append('/', $name);
                             }
                             Route::$action(
-                                $path->append($this->getParameters($method, $pathParameters))->value(),
-                                [$class, $methodName->value()]
+                                $path->append((string)$this->getParameters($method, $pathParameters)),
+                                [$class, (string)$methodName]
                             )
                                 ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
                         }
