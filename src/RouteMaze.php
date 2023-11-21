@@ -3,6 +3,7 @@
 namespace Ricventu\RouteMaze;
 
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Livewire\Component;
@@ -28,6 +29,17 @@ class RouteMaze
         }
 
         $namespace = str($namespace);
+
+
+        foreach ($filesystem->directories($directory) as $subDirectory) {
+
+            $name = str(basename($subDirectory))->snake('-');
+            Route::name($name . '.')
+                ->prefix($name)
+                ->group(function () use ($directory, $subDirectory, $namespace) {
+                    $this->registerRoutes($subDirectory, $namespace->append('\\',basename($subDirectory)));
+                });
+        }
 
         foreach ($filesystem->allFiles($directory) as $file) {
             $class = (string)$namespace
@@ -64,40 +76,47 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is('__invoke')) {
-                    $route = Route::get('/', $class);
+                    $route = Route::get($this->getParameters($method)->value(), $class);
                     if ($routeName->isNotEmpty()) {
                         $route->name($routeName->value());
                     }
                 } else if ($methodName->is('index')) {
-                    $route = Route::get('/', [$class, 'index']);
+                    $route = Route::get($this->getParameters($method), [$class, 'index']);
                     if ($routeName->isNotEmpty()) {
                         $route->name($routeName->value());
                     }
                 } else if ($methodName->startsWith('get')) {
-                    $this->addAction($methodName, $routeName, $class, 'get');
+                    $this->addAction($method, $methodName, $routeName, $class, 'get');
                 } else if ($methodName->startsWith('post')) {
-                    $this->addAction($methodName, $routeName, $class, 'post');
+                    $this->addAction($method, $methodName, $routeName, $class, 'post');
                 } else if ($methodName->startsWith('delete')) {
-                    $this->addAction($methodName, $routeName, $class, 'delete');
+                    $this->addAction($method, $methodName, $routeName, $class, 'delete');
                 }
             }
         }
-
-        foreach ($filesystem->directories($directory) as $subDirectory) {
-
-            $name = str(basename($subDirectory))->snake('-');
-            Route::name($name . '.')
-                ->prefix($name)
-                ->group(function () use ($directory, $subDirectory, $namespace) {
-                    $this->registerRoutes($subDirectory, $namespace->append('\\',basename($subDirectory)));
-                });
-        }
     }
 
-    public function addAction(mixed $methodName, mixed $routeName, string $class, string $method): void
+    public function addAction(ReflectionMethod $method, mixed $methodName, mixed $routeName, string $class, string $action): void
     {
-        $name = $methodName->after($method)->snake('-');
-        Route::$method($routeName . '/' . $name, [$class, $methodName->value()])
+        $name = $methodName->after($action)->snake('-');
+        Route::$action($routeName . '/' . $name . $this->getParameters($method), [$class, $methodName->value()])
             ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
+    }
+
+    public function getParameters(ReflectionMethod $method)
+    {
+        $parameters = str('');
+        foreach ($method->getParameters() as $parameter) {
+            $parameterName = $parameter->getName();
+            $parameterType = $parameter->getType();
+            if ($parameterType instanceof \ReflectionNamedType) {
+                $parameterType = $parameterType->getName();
+            }
+            if ($parameterType === Request::class) {
+                continue;
+            }
+            $parameters = $parameters->append('/{', $parameterName, '}');
+        }
+        return $parameters;
     }
 }
