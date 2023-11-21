@@ -22,7 +22,7 @@ class RouteMaze
     {
         $filesystem = app(Filesystem::class);
 
-        if (! $filesystem->exists($directory)) {
+        if (!$filesystem->exists($directory)) {
             return;
         }
 
@@ -30,11 +30,11 @@ class RouteMaze
 
         foreach ($filesystem->allFiles($directory) as $file) {
 
-            $class = (string) $namespace
+            $class = (string)$namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
-            if (! class_exists($class)) {
+            if (!class_exists($class)) {
                 continue;
             }
 
@@ -44,27 +44,50 @@ class RouteMaze
             }
 
             if (
-                method_exists($class, 'isDiscovered') &&
-                (! $class::isDiscovered())
+                method_exists($class, 'mazeDisabled') &&
+                (!$class::makeDisabled())
             ) {
                 continue;
             }
 
-            $prefix = str($class)->afterLast('\\')->replace('Controller', '')->snake('-');
+            if (method_exists($class, 'mazeName')) {
+                $routeName = str($class::mazeName());
+            } else {
+                $routeName = str($class)->afterLast('\\')->replace('Controller', '')->snake('-');
+            }
 
-            Route::prefix($prefix)->name($prefix)
-                ->group(function () use ($reflection, $class) {
-                foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_STATIC) as $method) {
-                    if ($method->isConstructor()) {
-                        continue;
-                    }
-                    if ($method->getName() == '__invoke') {
-                        Route::get('/', $class);
-                        continue;
-                    }
+            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC & ~ReflectionMethod::IS_STATIC) as $method) {
+                if ($method->isConstructor()) {
+                    continue;
                 }
-            });
+                $route = null;
+                $methodName = str($method->getName());
+
+                if ($methodName->is('__invoke')) {
+                    $route = Route::get('/', $class);
+                    if ($routeName->isNotEmpty()) {
+                        $route->name($routeName->value());
+                    }
+                } else if ($methodName->is('index')) {
+                    $route = Route::get('/', [$class, 'index']);
+                    if ($routeName->isNotEmpty()) {
+                        $route->name($routeName->value());
+                    }
+                } else if ($methodName->startsWith('get')) {
+                    $this->addAction($methodName, $routeName, $class, 'get');
+                } else if ($methodName->startsWith('post')) {
+                    $this->addAction($methodName, $routeName, $class, 'post');
+                } else if ($methodName->startsWith('delete')) {
+                    $this->addAction($methodName, $routeName, $class, 'delete');
+                }
+            }
         }
     }
 
+    public function addAction(mixed $methodName, mixed $routeName, string $class, string $method): void
+    {
+        $name = $methodName->after($method)->snake('-');
+        Route::$method($routeName . '/' . $name, [$class, $methodName->value()])
+            ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
+    }
 }
