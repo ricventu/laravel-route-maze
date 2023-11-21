@@ -106,9 +106,10 @@ class RouteMaze
                                 $path = str($routePath);
                             } else {
                                 $path = $routePath->append('/', $name);
+                                $name = $name->append('.', $action);
                             }
                             Route::$action(
-                                $path->append((string) $this->getParameters($method, $pathParameters)),
+                                (string) $path->append($this->getParameters($method, $pathParameters)),
                                 [$class, (string) $methodName]
                             )
                                 ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);

@@ -6,14 +6,14 @@ use function PHPUnit\Framework\assertEquals;
 
 it('named methods', function () {
     Route::maze(__DIR__.'/Controllers/Test3', 'Ricventu\\RouteMaze\\Tests\\Controllers\\Test3');
-    assertEquals('/test3', route('test3', absolute: false));
+    assertEquals('/test3', route('test3', absolute: false)); // index
     $this->get(route('test3'))->assertSee('Test3Controller@index');
-    assertEquals('/test3/show', route('test3.show', absolute: false));
-    $this->get(route('test3.show'))->assertSee('Test3Controller@getShow');
-    assertEquals('/test3/store', route('test3.store', absolute: false));
-    $this->post(route('test3.store'))->assertSee('Test3Controller@postStore');
-    assertEquals('/test3/delete', route('test3.delete', absolute: false));
-    $this->delete(route('test3.delete'))->assertSee('Test3Controller@deleteDelete');
+    assertEquals('/test3/show', route('test3.show.get', absolute: false));
+    $this->get(route('test3.show.get'))->assertSee('Test3Controller@getShow');
+    assertEquals('/test3/store', route('test3.store.post', absolute: false));
+    $this->post(route('test3.store.post'))->assertSee('Test3Controller@postStore');
+    assertEquals('/test3/delete', route('test3.delete.delete', absolute: false));
+    $this->delete(route('test3.delete.delete'))->assertSee('Test3Controller@deleteDelete');
 });
 
 it('action based methods', function () {
