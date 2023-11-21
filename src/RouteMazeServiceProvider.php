@@ -2,9 +2,9 @@
 
 namespace Ricventu\RouteMaze;
 
+use Illuminate\Routing\Router;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Ricventu\RouteMaze\Commands\RouteMazeCommand;
 
 class RouteMazeServiceProvider extends PackageServiceProvider
 {
@@ -17,9 +17,13 @@ class RouteMazeServiceProvider extends PackageServiceProvider
          */
         $package
             ->name('laravel-route-maze')
-            ->hasConfigFile()
-            ->hasViews()
-            ->hasMigration('create_laravel-route-maze_table')
-            ->hasCommand(RouteMazeCommand::class);
+            ->hasConfigFile();
+    }
+
+    public function packageRegistered()
+    {
+        app(Router::class)->macro('maze', function (string $directory, string $namespace) {
+            return \Ricventu\RouteMaze\Facades\RouteMaze::maze($directory, $namespace);
+        });
     }
 }
