@@ -2,7 +2,6 @@
 
 namespace Ricventu\RouteMaze;
 
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -28,7 +27,7 @@ class RouteMaze
         if ($filesystem->exists($directory.DIRECTORY_SEPARATOR.'middlewares.php')) {
             $middlewares = $filesystem->getRequire($directory.DIRECTORY_SEPARATOR.'middlewares.php');
             Route::middleware($middlewares)
-                ->group(fn() => $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters));
+                ->group(fn () => $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters));
         } else {
             $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters);
         }
@@ -45,12 +44,12 @@ class RouteMaze
                 $parameterName = $name->between('_', '_');
                 $pathParameters->push($parameterName);
                 Route::prefix('{'.$parameterName.'}')
-                    ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
+                    ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
                 $name = $name->snake('-');
                 Route::name($name.'.')
                     ->prefix($name)
-                    ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
+                    ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             }
         }
 
@@ -59,7 +58,7 @@ class RouteMaze
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
-            if (!str($class)->endsWith('Controller')) {
+            if (! str($class)->endsWith('Controller')) {
                 continue;
             }
 
@@ -89,14 +88,14 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is('__invoke')) {
-                    $route = Route::get((string)$routePath->append($this->getParameters($method, $pathParameters)), $class);
+                    $route = Route::get((string) $routePath->append($this->getParameters($method, $pathParameters)), $class);
                     if ($routeName->isNotEmpty()) {
-                        $route->name((string)$routeName);
+                        $route->name((string) $routeName);
                     }
                 } elseif ($methodName->is('index')) {
-                    $route = Route::get((string)$routePath->append($this->getParameters($method, $pathParameters)), [$class, 'index']);
+                    $route = Route::get((string) $routePath->append($this->getParameters($method, $pathParameters)), [$class, 'index']);
                     if ($routeName->isNotEmpty()) {
-                        $route->name((string)$routeName);
+                        $route->name((string) $routeName);
                     }
                 } else {
                     foreach (['get', 'post', 'delete'] as $action) {
@@ -109,8 +108,8 @@ class RouteMaze
                                 $path = $routePath->append('/', $name);
                             }
                             Route::$action(
-                                $path->append((string)$this->getParameters($method, $pathParameters)),
-                                [$class, (string)$methodName]
+                                $path->append((string) $this->getParameters($method, $pathParameters)),
+                                [$class, (string) $methodName]
                             )
                                 ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);
                         }
