@@ -2,9 +2,9 @@
 
 namespace Ricventu\RouteMaze;
 
+use Ricventu\RouteMaze\Commands\RouteMazeCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Ricventu\RouteMaze\Commands\RouteMazeCommand;
 
 class RouteMazeServiceProvider extends PackageServiceProvider
 {
