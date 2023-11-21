@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use function PHPUnit\Framework\assertEquals;
 
 it('level3', function () {

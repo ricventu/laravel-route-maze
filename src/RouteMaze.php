@@ -20,7 +20,7 @@ class RouteMaze
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
 
-        if (!$filesystem->exists($directory)) {
+        if (! $filesystem->exists($directory)) {
             return;
         }
 
@@ -29,7 +29,7 @@ class RouteMaze
         foreach ($filesystem->directories($directory) as $subDirectory) {
 
             $name = str(basename($subDirectory))->snake('-');
-            Route::name($name . '.')
+            Route::name($name.'.')
                 ->prefix($name)
                 ->group(function () use ($subDirectory, $namespace) {
                     $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)));
@@ -37,11 +37,11 @@ class RouteMaze
         }
 
         foreach ($filesystem->allFiles($directory) as $file) {
-            $class = (string)$namespace
+            $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 continue;
             }
 
@@ -52,7 +52,7 @@ class RouteMaze
 
             if (
                 method_exists($class, 'mazeDisabled') &&
-                (!$class::makeDisabled())
+                (! $class::makeDisabled())
             ) {
                 continue;
             }
@@ -101,7 +101,7 @@ class RouteMaze
                                 $path->append($this->getParameters($method))->value(),
                                 [$class, $methodName->value()]
                             )
-                                ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
+                                ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);
                         }
                     }
                 }
