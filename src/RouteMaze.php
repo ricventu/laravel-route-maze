@@ -26,14 +26,13 @@ class RouteMaze
 
         $namespace = str($namespace);
 
-
         foreach ($filesystem->directories($directory) as $subDirectory) {
 
             $name = str(basename($subDirectory))->snake('-');
-            Route::name($name . '.')
+            Route::name($name.'.')
                 ->prefix($name)
-                ->group(function () use ($directory, $subDirectory, $namespace) {
-                    $this->registerRoutes($subDirectory, $namespace->append('\\',basename($subDirectory)));
+                ->group(function () use ($subDirectory, $namespace) {
+                    $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)));
                 });
         }
 
@@ -95,7 +94,7 @@ class RouteMaze
     public function addAction(ReflectionMethod $method, mixed $methodName, mixed $routeName, string $class, string $action): void
     {
         $name = $methodName->after($action)->snake('-');
-        Route::$action($routeName.'/'.$name . $this->getParameters($method), [$class, $methodName->value()])
+        Route::$action($routeName.'/'.$name.$this->getParameters($method), [$class, $methodName->value()])
             ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);
     }
 
@@ -113,6 +112,7 @@ class RouteMaze
             }
             $parameters = $parameters->append('/{', $parameterName, '}');
         }
+
         return $parameters;
     }
 }
