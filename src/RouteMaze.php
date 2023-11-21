@@ -21,7 +21,7 @@ class RouteMaze
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
 
-        if (!$filesystem->exists($directory)) {
+        if (! $filesystem->exists($directory)) {
             return;
         }
 
@@ -33,13 +33,13 @@ class RouteMaze
             if ($name->startsWith('_') && $name->endsWith('_')) {
                 $parameterName = $name->between('_', '_');
                 $pathParameters->push($parameterName);
-                Route::prefix("{" . $parameterName . "}")
+                Route::prefix('{'.$parameterName.'}')
                     ->group(function () use ($subDirectory, $namespace, $pathParameters) {
-                       $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                        $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
                     });
             } else {
                 $name = $name->snake('-');
-                Route::name($name . '.')
+                Route::name($name.'.')
                     ->prefix($name)
                     ->group(function () use ($subDirectory, $namespace, $pathParameters) {
                         $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
@@ -48,11 +48,11 @@ class RouteMaze
         }
 
         foreach ($filesystem->files($directory) as $file) {
-            $class = (string)$namespace
+            $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 continue;
             }
 
@@ -63,7 +63,7 @@ class RouteMaze
 
             if (
                 method_exists($class, 'mazeDisabled') &&
-                (!$class::makeDisabled())
+                (! $class::makeDisabled())
             ) {
                 continue;
             }
@@ -112,7 +112,7 @@ class RouteMaze
                                 $path->append($this->getParameters($method, $pathParameters))->value(),
                                 [$class, $methodName->value()]
                             )
-                                ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
+                                ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);
                         }
                     }
                 }
