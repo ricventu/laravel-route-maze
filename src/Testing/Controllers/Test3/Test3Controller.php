@@ -8,6 +8,7 @@ class Test3Controller
     {
         return class_basename(static::class.'@'.__FUNCTION__);
     }
+
     public function getShow()
     {
         return class_basename(static::class.'@'.__FUNCTION__);
