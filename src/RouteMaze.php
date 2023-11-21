@@ -2,6 +2,7 @@
 
 namespace Ricventu\RouteMaze;
 
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -13,18 +14,28 @@ class RouteMaze
 {
     public function maze(string $directory, string $namespace)
     {
-        $this->registerRoutes($directory, $namespace, collect());
-    }
-
-    protected function registerRoutes(string $directory, string $namespace, Collection $pathParameters): void
-    {
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
 
         if (!$filesystem->exists($directory)) {
             return;
         }
+        $this->registerRoutesWithMiddlewares($filesystem, $directory, $namespace, collect());
+    }
 
+    protected function registerRoutesWithMiddlewares(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters): void
+    {
+        if ($filesystem->exists($directory.DIRECTORY_SEPARATOR.'middlewares.php')) {
+            $middlewares = $filesystem->getRequire($directory.DIRECTORY_SEPARATOR.'middlewares.php');
+            Route::middleware($middlewares)
+                ->group(fn() => $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters));
+        } else {
+            $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters);
+        }
+    }
+
+    protected function registerRoutes(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters): void
+    {
         $namespace = str($namespace);
 
         foreach ($filesystem->directories($directory) as $subDirectory) {
@@ -34,16 +45,12 @@ class RouteMaze
                 $parameterName = $name->between('_', '_');
                 $pathParameters->push($parameterName);
                 Route::prefix("{" . $parameterName . "}")
-                    ->group(function () use ($subDirectory, $namespace, $pathParameters) {
-                        $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
-                    });
+                    ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
                 $name = $name->snake('-');
                 Route::name($name . '.')
                     ->prefix($name)
-                    ->group(function () use ($subDirectory, $namespace, $pathParameters) {
-                        $this->registerRoutes($subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
-                    });
+                    ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             }
         }
 
