@@ -17,7 +17,7 @@ class RouteMaze
         /** @var Filesystem $filesystem */
         $filesystem = app(Filesystem::class);
 
-        if (!$filesystem->exists($directory)) {
+        if (! $filesystem->exists($directory)) {
             return;
         }
         $this->registerRoutesWithMiddlewares($filesystem, $directory, $namespace, collect());
@@ -44,18 +44,18 @@ class RouteMaze
             if ($name->startsWith('_') && $name->endsWith('_')) {
                 $parameterName = $name->between('_', '_');
                 $pathParameters->push($parameterName);
-                Route::prefix("{" . $parameterName . "}")
+                Route::prefix('{'.$parameterName.'}')
                     ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
                 $name = $name->snake('-');
-                Route::name($name . '.')
+                Route::name($name.'.')
                     ->prefix($name)
                     ->group(fn() => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             }
         }
 
         foreach ($filesystem->files($directory) as $file) {
-            $class = (string)$namespace
+            $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace(['/', '.php'], ['\\', '']);
 
@@ -63,7 +63,7 @@ class RouteMaze
                 continue;
             }
 
-            if (!class_exists($class)) {
+            if (! class_exists($class)) {
                 continue;
             }
 
@@ -73,7 +73,7 @@ class RouteMaze
             }
             if (
                 method_exists($class, 'mazeDisabled') &&
-                (!$class::makeDisabled())
+                (! $class::makeDisabled())
             ) {
                 continue;
             }
@@ -112,7 +112,7 @@ class RouteMaze
                                 $path->append((string)$this->getParameters($method, $pathParameters)),
                                 [$class, (string)$methodName]
                             )
-                                ->name($routeName->isEmpty() ? $name : $routeName . '.' . $name);
+                                ->name($routeName->isEmpty() ? $name : $routeName.'.'.$name);
                         }
                     }
                 }
