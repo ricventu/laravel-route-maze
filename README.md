@@ -89,7 +89,9 @@ examples:
 | delete, destroy, remove                    | POST         |
 | all others public methods                  | GET          |
 
+## Disable discover for a Controller
 
+To disable route discover for a specified crontroller, add static method `mazeDisabled` that returns `true`
 
 ## Installation
 
