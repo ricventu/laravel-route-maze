@@ -95,10 +95,14 @@ class RouteMaze
                         $route->name((string) $classPrefix);
                     }
                 } else {
-                    if ($methodName->startsWith(config('route-maze.post_method_prefix'))) {
-                        $action = 'post';
-                    } else {
+                    if ($methodName->startsWith(config('route-maze.get_method_prefix'))) {
                         $action = 'get';
+                    } elseif ($methodName->startsWith(config('route-maze.post_method_prefix'))) {
+                        $action = 'post';
+                    } elseif ($methodName->startsWith(config('route-maze.delete_method_prefix'))) {
+                        $action = 'delete';
+                    } else {
+                        continue;
                     }
 
                     $methodName = $methodName->kebab();
