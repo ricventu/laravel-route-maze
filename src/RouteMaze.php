@@ -70,9 +70,10 @@ class RouteMaze
             if ($reflection->isAbstract()) {
                 continue;
             }
+
             if (
                 method_exists($class, 'mazeDisabled') &&
-                (!$class::makeDisabled())
+                ($class::mazeDisabled())
             ) {
                 continue;
             }
