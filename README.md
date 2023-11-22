@@ -5,139 +5,54 @@
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/ricventu/laravel-route-maze/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/ricventu/laravel-route-maze/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
 
-Parse the give path and generate a route for each controller found.
 
+A quick and easy way to create the routes is to take advantage of the over configuration convention.  
+This means that routes are automatically generated based on the directory structure of the controllers and the methods of the controllers.  
+In this way, you don't have to manually write the routes in the web.php or api.php file, but just follow some rules of file naming and organization.  
+Route groups are base on subdirectories of the controllers.
 
-## Index method
+Let's see how to do it with a practical example.
 
-If you want to use the index method in your controller, you can use the `index` method in your controller.
-
+Controller: `App/Http/Controllers/SomeCategory/ProductsController.php`
 ```php
-class MyController
+class ProductsController
 {
-    public function __invoke()
-    {
-       ...
-    }
+    public function index() {...}
+    public function show($id) {...}
+    public function store(Request $request) {...}
+    public function update($id, Request $request) {...}
+    public function destroy($id) {...}
 }
 ```
-
-becomes
-
 ```php
-    Route::get('/my', 'MyController@index')->name('my');
+    Route::maze(app_path('Http/Controllers'), 'App\\Http\\Controllers');
 ```
 
-## Invocable Controllers
-
-If you want to use invocable controllers, you can use the `__invoke` method in your controller.
-
+The generated routes are:
 ```php
-class MyController
-{
-    public function __invoke()
-    {
-       ...
-    }
-}
-```
-
-becomes
-
-```php
-    Route::get('/my', 'MyController')->name('my')
-```
-
-## Controller methods with route action
-
-```php
-class MyController
-{
-    public function getItem() {...}
-    public function postItem() {...}
-    public function deleteItem() {...}
-}
-```
-
-becomes
-
-```php
-    Route::get('/my/item', 'MyController@getItem')->name('my.item.get');
-    Route::post('/my/item', 'MyController@postItem')->name('my.item.post');
-    Route::delete('/my/item', 'MyController@deleteItem')->name('my.item.delete');
-```
-
-## Controller methods with route action and no suffix
-
-```php
-class MyController
-{
-    public function get() {...}
-    public function post() {...}
-    public function delete() {...}
-}
-```
-
-becomes
-
-```php
-    Route::get('/my', 'MyController@getItem')->name('my.get');
-    Route::post('/my', 'MyController@postItem')->name('my.post');
-    Route::delete('/my', 'MyController@deleteItem'))->name('my.delete');
-```
-
-## Parameters
-
-```php
-class MyController
-{
-    public function getItem($id) {...}
-}
-```
-
-becomes
-
-```php
-    Route::get('/my/item/{id}', 'MyController@getItem')->name('my.item.get');
+    Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products.index');
+    Route::get('/some-category/products/show/{id}', 'SomeCategory\ProductsController@show')->name('some-category.products.show');
+    Route::post('/some-category/products/store', 'SomeCategory\ProductsController@store')->name('some-category.products.store');
+    Route::post('/some-category/products/update/{id}', 'SomeCategory\ProductsController@update')->name('some-category.products.update');
+    Route::post('/some-category/products/destroy/{id}', 'SomeCategory\ProductsController@destroy')->name('some-category.products.destroy');
 ```
 
 ## Parameters in path
 
 Parameters can be specified in the path naming the directory with `_param-name_`.
 
-
-`Http/Controllers/_arg1_/MyController.php`
+`Http/Controllers/_param1_/ItemsController.php`
 
 ```php
-class MyController
+class ItemsController
 {
     public function get($id) {...}
 }
 ```
-
 becomes
 
 ```php
-    Route::get('/{arg1}/my/{id}', 'MyController@get')->name('my.get');
-```
-
-## Subdirectories
-
-All subdirectories are parsed and used as path.
-
-`Http/Controllers/Dir1/Dir2/_arg1_/MyController.php`
-
-```php
-class MyController
-{
-    public function getItem($id) {...}
-}
-```
-
-becomes
-
-```php
-    Route::get('/dir1/dir2/{arg1}/my/item/{id}', 'MyController@getItem')->name('dir1.dir2.my.item.get');
+    Route::get('/{param1}/items/get/{id}', 'ItemsController@get')->name('items.get');
 ```
 
 ## Middleware
@@ -149,6 +64,31 @@ return [
     'auth',
 ];
 ```
+
+## Naming conventions
+
+The name of the controller file must be the same as the name of the route, but in camelcase and with the suffix `Controller.php`.
+The name of the method must be the same as the name of the route, but in camelcase.
+Route names are converted in kebab-case.
+
+examples:
+
+| Controller name       | Method name      | Route name                | Route path                      | Route Method |
+|-----------------------|------------------|---------------------------|---------------------------------|--------------|
+| SomeProductController | showItem($id)    | some.product.show-item    | /some-product/show-item/{id}    | GET          |
+| SomeProductController | storeItem        | some.product.store-item   | /some-product/store-item        | POST         |
+| SomeProductController | updateItem($id)  | some.product.update-item  | /some-product/update-item/{id}  | POST         |
+| SomeProductController | destroyItem($id) | some.product.destroy-item | /some-product/destroy-item/{id} | POST         |
+
+## Route Method Convention
+
+| Controller Method                          | Route Method |
+|--------------------------------------------|--------------|
+| index, __invoke                            | GET          |
+| post, store, save, set, put, patch, update | POST         |
+| delete, destroy, remove                    | POST         |
+| all others public methods                  | GET          |
+
 
 
 ## Installation
