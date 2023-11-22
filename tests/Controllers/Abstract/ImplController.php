@@ -7,5 +7,4 @@ class ImplController extends AbstractController
     public function show($id)
     {
     }
-
 }

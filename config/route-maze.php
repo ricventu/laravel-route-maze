@@ -4,6 +4,6 @@
 return [
     'post_method_prefix' => [
         'post', 'store', 'save', 'set', 'put', 'patch', 'update',
-        'delete', 'destroy', 'remove'
-    ]
+        'delete', 'destroy', 'remove',
+    ],
 ];

@@ -7,5 +7,4 @@ abstract class AbstractController
     public function index()
     {
     }
-
 }
