@@ -2,7 +2,6 @@
 
 namespace Ricventu\RouteMaze\Tests\Controllers\TestParams;
 
-
 use Illuminate\Http\Request;
 
 class ParamsController
