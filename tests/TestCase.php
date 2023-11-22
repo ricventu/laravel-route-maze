@@ -2,7 +2,6 @@
 
 namespace Ricventu\RouteMaze\Tests;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
 use Ricventu\RouteMaze\RouteMazeServiceProvider;
 
