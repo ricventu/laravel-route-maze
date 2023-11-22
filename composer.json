@@ -1,6 +1,6 @@
 {
     "name": "ricventu/laravel-route-maze",
-    "description": "Generate Laravel routes basend on Controllers paths",
+    "description": "A quick and easy way to create the routes is to take advantage of the over configuration convention",
     "keywords": [
         "ricventu",
         "laravel",
