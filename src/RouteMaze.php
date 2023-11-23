@@ -134,7 +134,7 @@ class RouteMaze
             }
 
             if ($parameterType instanceof \ReflectionNamedType) {
-                if (!$parameterType->isBuiltin()) {
+                if (! $parameterType->isBuiltin()) {
                     if ($parameterType->getName() === Request::class) {
                         continue;
                     }
@@ -148,8 +148,7 @@ class RouteMaze
                         }
                     }
                 }
-            }
-            else if ($parameterName === 'request') {
+            } elseif ($parameterName === 'request') {
                 continue;
             }
 
