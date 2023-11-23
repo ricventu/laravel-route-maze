@@ -6,5 +6,4 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class CustomRequest extends FormRequest
 {
-
 }

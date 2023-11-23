@@ -6,7 +6,7 @@ use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 
 it('parameters', function () {
-    Route::maze(__DIR__ . '/Controllers/Params', 'Ricventu\\RouteMaze\\Tests\\Controllers\\Params');
+    Route::maze(__DIR__.'/Controllers/Params', 'Ricventu\\RouteMaze\\Tests\\Controllers\\Params');
     $routes = Route::getRoutes()->getRoutes();
     assertCount(3, $routes);
     assertEquals('params/{id}', $routes[0]->uri);
