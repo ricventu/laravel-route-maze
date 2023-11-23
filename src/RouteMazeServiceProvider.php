@@ -16,8 +16,7 @@ class RouteMazeServiceProvider extends PackageServiceProvider
          * More info: https://github.com/spatie/laravel-package-tools
          */
         $package
-            ->name('laravel-route-maze')
-            ->hasConfigFile();
+            ->name('laravel-route-maze');
     }
 
     public function packageRegistered()

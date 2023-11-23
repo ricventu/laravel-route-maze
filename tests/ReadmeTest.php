@@ -23,9 +23,9 @@ it('Readme example', function () {
     assertEquals('some-category/products/update/{id}', $routes[3]->uri);
     assertEquals('some-category.products.update', $routes[3]->getName());
     assertEquals('Ricventu\RouteMaze\Tests\Controllers\Readme\SomeCategory\ProductsController@update', $routes[3]->action['controller']);
-    assertEquals(['POST'], $routes[3]->methods);
+    assertEquals(['PUT', 'PATCH'], $routes[3]->methods);
     assertEquals('some-category/products/destroy/{id}', $routes[4]->uri);
     assertEquals('some-category.products.destroy', $routes[4]->getName());
     assertEquals('Ricventu\RouteMaze\Tests\Controllers\Readme\SomeCategory\ProductsController@destroy', $routes[4]->action['controller']);
-    assertEquals(['POST'], $routes[4]->methods);
+    assertEquals(['DELETE'], $routes[4]->methods);
 });

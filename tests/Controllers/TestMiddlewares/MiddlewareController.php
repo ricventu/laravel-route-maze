@@ -6,6 +6,5 @@ class MiddlewareController
 {
     public function index()
     {
-        return class_basename(static::class.'@'.__FUNCTION__);
     }
 }
