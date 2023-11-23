@@ -40,17 +40,24 @@ class RouteMaze
         $namespace = str($namespace);
 
         foreach ($filesystem->directories($directory) as $subDirectory) {
-            $name = str(basename($subDirectory));
+            $directoryName = str(basename($subDirectory));
 
-            if ($name->startsWith('_') && $name->endsWith('_')) {
-                $parameterName = $name->between('_', '_');
+            if ($directoryName->startsWith('_') && $directoryName->endsWith('_')) {
+                $parameterName = $directoryName->between('_', '_');
                 $pathParameters->push($parameterName);
                 Route::prefix('{'.$parameterName.'}')
                     ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
-                $name = $name->kebab();
-                Route::name($namePrefix.$name)
-                    ->prefix($name)
+                if ($filesystem->exists($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php')) {
+                    $config = $filesystem->getRequire($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php');
+                    if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
+                        $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                        continue;
+                    }
+                }
+                $directoryName = $directoryName->kebab();
+                Route::name($namePrefix.$directoryName)
+                    ->prefix($directoryName)
                     ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters, '.'));
             }
         }
