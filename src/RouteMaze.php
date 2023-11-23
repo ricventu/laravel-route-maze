@@ -110,7 +110,6 @@ class RouteMaze
         $methodName = $methodName->kebab();
         $uri = $classPrefix->append('/', $methodName, $this->getParameters($method, $pathParameters));
         foreach ($method->getAttributes() as $attribute) {
-            /** @var ReflectionAttribute $attribute */
             $attribute = $attribute->newInstance();
             if (is_subclass_of($attribute, Method::class)) {
                 $routes[] = Route::addRoute(
