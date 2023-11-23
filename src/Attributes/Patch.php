@@ -2,6 +2,6 @@
 
 namespace Ricventu\RouteMaze\Attributes;
 
-#[\Attribute] class Put extends Method
+#[\Attribute] class Patch extends Method
 {
 }

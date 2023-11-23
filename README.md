@@ -6,8 +6,8 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
 
 
-A quick and easy way to create the routes is to take advantage of the over configuration convention.  
-This means that routes are automatically generated based on the directory structure of the controllers and the methods of the controllers.  
+A quick and easy way to create the routes is to take advantage of the **convention over configuration** and **PHP attributes**.  
+This means that routes are automatically generated based on the directory structure of the controllers and the methods attributes.  
 In this way, you don't have to manually write the routes in the web.php or api.php file, but just follow some rules of file naming and organization.  
 Route groups are base on subdirectories of the controllers.
 
@@ -17,10 +17,15 @@ Controller: `App/Http/Controllers/SomeCategory/ProductsController.php`
 ```php
 class ProductsController
 {
+    // index and __invoke defaults to GET
     public function index() {...}
+    #[Get]
     public function show($id) {...}
+    #[Post]
     public function store(Request $request) {...}
+    #[Patch]
     public function update($id, Request $request) {...}
+    #[Delete]
     public function destroy($id) {...}
 }
 ```
@@ -33,8 +38,8 @@ The generated routes are:
     Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products.index');
     Route::get('/some-category/products/show/{id}', 'SomeCategory\ProductsController@show')->name('some-category.products.show');
     Route::post('/some-category/products/store', 'SomeCategory\ProductsController@store')->name('some-category.products.store');
-    Route::post('/some-category/products/update/{id}', 'SomeCategory\ProductsController@update')->name('some-category.products.update');
-    Route::post('/some-category/products/destroy/{id}', 'SomeCategory\ProductsController@destroy')->name('some-category.products.destroy');
+    Route::Patch('/some-category/products/update/{id}', 'SomeCategory\ProductsController@update')->name('some-category.products.update');
+    Route::delete('/some-category/products/destroy/{id}', 'SomeCategory\ProductsController@destroy')->name('some-category.products.destroy');
 ```
 
 ## Parameters in path
@@ -46,6 +51,7 @@ Parameters can be specified in the path naming the directory with `_param-name_`
 ```php
 class ItemsController
 {
+    #[Get]
     public function get($id) {...}
 }
 ```
@@ -67,27 +73,16 @@ return [
 
 ## Naming conventions
 
-The name of the controller file must be the same as the name of the route, but in camelcase and with the suffix `Controller.php`.
-The name of the method must be the same as the name of the route, but in camelcase.
-Route names are converted in kebab-case.
+Uri and route name are composed from directories, first part of the controller name (before `Controller`) and method name, all in kebab-case.
 
 examples:
 
-| Controller name       | Method name      | Route name                | Route path                      | Route Method |
-|-----------------------|------------------|---------------------------|---------------------------------|--------------|
-| SomeProductController | showItem($id)    | some.product.show-item    | /some-product/show-item/{id}    | GET          |
-| SomeProductController | storeItem        | some.product.store-item   | /some-product/store-item        | POST         |
-| SomeProductController | updateItem($id)  | some.product.update-item  | /some-product/update-item/{id}  | POST         |
-| SomeProductController | destroyItem($id) | some.product.destroy-item | /some-product/destroy-item/{id} | POST         |
-
-## Route Method Convention
-
-| Controller Method                          | Route Method |
-|--------------------------------------------|--------------|
-| index, __invoke                            | GET          |
-| post, store, save, set, put, patch, update | POST         |
-| delete, destroy, remove                    | POST         |
-| all others public methods                  | GET          |
+| Controller name       | Method name      | Route name                | Route path                      |
+|-----------------------|------------------|---------------------------|---------------------------------|
+| SomeProductController | showItem($id)    | some.product.show-item    | /some-product/show-item/{id}    |
+| SomeProductController | storeItem        | some.product.store-item   | /some-product/store-item        |
+| SomeProductController | updateItem($id)  | some.product.update-item  | /some-product/update-item/{id}  |
+| SomeProductController | destroyItem($id) | some.product.destroy-item | /some-product/destroy-item/{id} |
 
 ## Disable discover for a Controller
 
