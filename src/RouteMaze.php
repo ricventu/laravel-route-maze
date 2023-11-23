@@ -24,18 +24,18 @@ class RouteMaze
         $this->registerRoutesWithMiddlewares($filesystem, $directory, $namespace, collect());
     }
 
-    protected function registerRoutesWithMiddlewares(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters): void
+    protected function registerRoutesWithMiddlewares(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters, string $namePrefix = ''): void
     {
         if ($filesystem->exists($directory.DIRECTORY_SEPARATOR.'middlewares.php')) {
             $middlewares = $filesystem->getRequire($directory.DIRECTORY_SEPARATOR.'middlewares.php');
             Route::middleware($middlewares)
-                ->group(fn () => $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters));
+                ->group(fn () => $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters, $namePrefix));
         } else {
-            $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters);
+            $this->registerRoutes($filesystem, $directory, $namespace, $pathParameters, $namePrefix);
         }
     }
 
-    protected function registerRoutes(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters): void
+    protected function registerRoutes(Filesystem $filesystem, string $directory, string $namespace, Collection $pathParameters, string $namePrefix): void
     {
         $namespace = str($namespace);
 
@@ -49,9 +49,9 @@ class RouteMaze
                     ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
                 $name = $name->kebab();
-                Route::name($name.'.')
+                Route::name($namePrefix.$name)
                     ->prefix($name)
-                    ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
+                    ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters, '.'));
             }
         }
 
@@ -87,27 +87,26 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is(['__invoke', 'index'])) {
-                    $routes = $this->addRoutesFromAttributes($class, $pathParameters, $method, $classPrefix, $methodName);
+                    $routes = $this->addRoutesFromAttributes($class, $pathParameters, $method, $classPrefix, $methodName, $namePrefix);
                     if (empty($routes)) {
                         // default to get
                         $route = Route::get((string) $classPrefix->append($this->getParameters($method, $pathParameters)), [$class, (string) $methodName]);
                         if ($classPrefix->isNotEmpty()) {
-                            $route->name((string) $classPrefix);
+                            $route->name((string) $classPrefix->prepend($namePrefix));
                         }
                     }
                 } else {
-                    $this->addRoutesFromAttributes($class, $pathParameters, $method, $classPrefix, $methodName);
+                    $this->addRoutesFromAttributes($class, $pathParameters, $method, $classPrefix, $methodName, $namePrefix);
                 }
             }
         }
     }
 
-    protected function addRoutesFromAttributes(string $class, Collection $pathParameters, ReflectionMethod $method, Stringable $classPrefix, Stringable $methodName): array
+    protected function addRoutesFromAttributes(string $class, Collection $pathParameters, ReflectionMethod $method, Stringable $classPrefix, Stringable $methodName, string $namePrefix): array
     {
         $routes = [];
-        $routeName = $classPrefix->isEmpty() ? $methodName : $classPrefix->append('.', $methodName);
-        $methodName = $methodName->kebab();
-        $uri = $classPrefix->append('/', $methodName, $this->getParameters($method, $pathParameters));
+        $routeName = $classPrefix->isEmpty() ? $methodName->kebab()->prepend($namePrefix) : $classPrefix->prepend($namePrefix)->append('.', $methodName->kebab());
+        $uri = $classPrefix->append('/', $methodName->kebab(), $this->getParameters($method, $pathParameters));
         foreach ($method->getAttributes() as $attribute) {
             $attribute = $attribute->newInstance();
             if (is_subclass_of($attribute, Method::class)) {
