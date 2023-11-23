@@ -2,6 +2,3 @@
 
 All notable changes to `laravel-route-maze` will be documented in this file.
 
-## v1.0.0 - 2023-11-22
-
-First release
