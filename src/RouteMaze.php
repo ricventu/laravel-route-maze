@@ -40,6 +40,14 @@ class RouteMaze
         $namespace = str($namespace);
 
         foreach ($filesystem->directories($directory) as $subDirectory) {
+            $config = [];
+            if ($filesystem->exists($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php')) {
+                $config = $filesystem->getRequire($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php');
+            }
+
+            if (isset($config['disabled']) && $config['disabled']) {
+                continue;
+            }
             $directoryName = str(basename($subDirectory));
 
             if ($directoryName->startsWith('_') && $directoryName->endsWith('_')) {
@@ -48,6 +56,10 @@ class RouteMaze
                 Route::prefix('{'.$parameterName.'}')
                     ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
             } else {
+                if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
+                    $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+                    continue;
+                }
                 if ($filesystem->exists($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php')) {
                     $config = $filesystem->getRequire($subDirectory.DIRECTORY_SEPARATOR.'maze-config.php');
                     if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
