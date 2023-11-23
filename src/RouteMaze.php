@@ -10,6 +10,7 @@ use Illuminate\Support\Stringable;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionMethod;
+use Ricventu\RouteMaze\Attributes\Method;
 
 class RouteMaze
 {
@@ -111,7 +112,7 @@ class RouteMaze
         foreach ($method->getAttributes() as $attribute) {
             /** @var ReflectionAttribute $attribute */
             $attribute = $attribute->newInstance();
-            if ($attribute instanceof Attributes\Method) {
+            if (is_subclass_of($attribute, Method::class)) {
                 $routes[] = Route::addRoute(
                     $attribute->getMethods(),
                     (string) $uri,
