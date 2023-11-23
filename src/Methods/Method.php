@@ -1,9 +1,9 @@
 <?php
 
-namespace Ricventu\RouteMaze\Attributes;
+namespace Ricventu\RouteMaze\Methods;
 
 use Illuminate\Support\Str;
-use Ricventu\RouteMaze\Attributes\Contracts\RouteMethod;
+use Ricventu\RouteMaze\Methods\Contracts\RouteMethod;
 
 abstract class Method implements RouteMethod
 {

@@ -3,7 +3,7 @@
 namespace Ricventu\RouteMaze\Tests\Controllers\Params;
 
 use Illuminate\Http\Request;
-use Ricventu\RouteMaze\Attributes\Get;
+use Ricventu\RouteMaze\Methods\Get;
 
 class ParamsController
 {

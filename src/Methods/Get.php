@@ -1,6 +1,6 @@
 <?php
 
-namespace Ricventu\RouteMaze\Attributes;
+namespace Ricventu\RouteMaze\Methods;
 
 #[\Attribute] class Get extends Method
 {

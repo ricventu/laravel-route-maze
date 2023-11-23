@@ -2,7 +2,7 @@
 
 namespace Ricventu\RouteMaze\Tests\Controllers\Abstract;
 
-use Ricventu\RouteMaze\Attributes\Get;
+use Ricventu\RouteMaze\Methods\Get;
 
 class ImplController extends AbstractController
 {

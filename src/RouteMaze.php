@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Stringable;
 use ReflectionClass;
 use ReflectionMethod;
-use Ricventu\RouteMaze\Attributes\Method;
+use Ricventu\RouteMaze\Methods\Method;
 
 class RouteMaze
 {

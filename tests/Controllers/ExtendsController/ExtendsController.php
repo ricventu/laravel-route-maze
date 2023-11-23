@@ -2,7 +2,7 @@
 
 namespace Ricventu\RouteMaze\Tests\Controllers\ExtendsController;
 
-use Ricventu\RouteMaze\Attributes\Get;
+use Ricventu\RouteMaze\Methods\Get;
 
 class ExtendsController extends \Illuminate\Routing\Controller
 {

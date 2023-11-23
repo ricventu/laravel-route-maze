@@ -1,6 +1,6 @@
 <?php
 
-namespace Ricventu\RouteMaze\Attributes\Contracts;
+namespace Ricventu\RouteMaze\Methods\Contracts;
 
 interface RouteMethod
 {
