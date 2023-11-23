@@ -1,9 +1,10 @@
 {
     "name": "ricventu/laravel-route-maze",
-    "description": "A quick and easy way to create the routes is to take advantage of the over configuration convention",
+    "description": "A quick and easy way to create the routes is to take advantage of the convention over configuration",
     "keywords": [
         "ricventu",
         "laravel",
+        "route",
         "laravel-route-maze"
     ],
     "homepage": "https://github.com/ricventu/laravel-route-maze",

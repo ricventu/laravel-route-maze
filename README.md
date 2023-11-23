@@ -73,7 +73,7 @@ return [
 
 ## Naming conventions
 
-Uri and route name are composed from directories, first part of the controller name (before `Controller`) and method name, all in kebab-case.
+Uri and route name are composed of directories name, first part of the controller name (before `Controller`) and method name, all in kebab-case.
 
 examples:
 
@@ -87,6 +87,23 @@ examples:
 ## Disable discover for a Controller
 
 To disable route discover for a specified crontroller, add static method `mazeDisabled` that returns `true`
+
+## In path configuration
+
+If in the path is present a file named `maze.php`, it will be used to configure the route group.
+
+```php
+return [
+];
+```
+
+| Key              | Description                            | Default |
+|------------------|----------------------------------------|---------|
+| ignore_path_name | Ignore path and name in route          | false   |
+| disabled         | Disable discovering of the entire path |         |
+
+
+```php
 
 ## Installation
 
