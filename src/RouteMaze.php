@@ -128,15 +128,31 @@ class RouteMaze
         foreach ($method->getParameters() as $parameter) {
             $parameterName = $parameter->getName();
             $parameterType = $parameter->getType();
-            if ($parameterType instanceof \ReflectionNamedType) {
-                $parameterType = $parameterType->getName();
-            }
-            if ($parameterType === Request::class) {
-                continue;
-            }
+
             if ($pathParameters->contains($parameterName)) {
                 continue;
             }
+
+            if ($parameterType instanceof \ReflectionNamedType) {
+                if (!$parameterType->isBuiltin()) {
+                    if ($parameterType->getName() === Request::class) {
+                        continue;
+                    }
+                    if (class_exists($parameterType->getName())) {
+                        $reflection = new ReflectionClass($parameterType->getName());
+                        if ($reflection->isAbstract()) {
+                            continue;
+                        }
+                        if ($reflection->isSubclassOf(Request::class)) {
+                            continue;
+                        }
+                    }
+                }
+            }
+            else if ($parameterName === 'request') {
+                continue;
+            }
+
             $parameters = $parameters->append('/{', $parameterName, '}');
         }
 
