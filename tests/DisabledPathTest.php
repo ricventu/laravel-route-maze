@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use function PHPUnit\Framework\assertCount;
 
 it('disabled path', function () {

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEquals;
 

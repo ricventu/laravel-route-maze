@@ -58,12 +58,14 @@ class RouteMaze
             } else {
                 if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
                     $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+
                     continue;
                 }
                 if ($filesystem->exists($subDirectory.DIRECTORY_SEPARATOR.'maze.php')) {
                     $config = $filesystem->getRequire($subDirectory.DIRECTORY_SEPARATOR.'maze.php');
                     if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
                         $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);
+
                         continue;
                     }
                 }
