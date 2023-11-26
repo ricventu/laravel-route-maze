@@ -29,6 +29,8 @@ class ProductsController
     public function destroy($id) {...}
 }
 ```
+To get routes simpli add the the following line to `routes/web.php`
+
 ```php
     Route::maze(app_path('Http/Controllers'), 'App\\Http\\Controllers');
 ```
