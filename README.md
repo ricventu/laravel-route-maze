@@ -37,7 +37,7 @@ To get routes simpli add the the following line to `routes/web.php`
 
 The generated routes are:
 ```php
-    Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products.index');
+    Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products');
     Route::get('/some-category/products/show/{id}', 'SomeCategory\ProductsController@show')->name('some-category.products.show');
     Route::post('/some-category/products/store', 'SomeCategory\ProductsController@store')->name('some-category.products.store');
     Route::Patch('/some-category/products/update/{id}', 'SomeCategory\ProductsController@update')->name('some-category.products.update');
