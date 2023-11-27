@@ -139,6 +139,10 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
 
+## Performance note
+
+In production deployment, it's recommended to cache route discovering using Laravel `route:cache` built in command
+
 ## Credits
 
 - [Riccardo Venturini](https://github.com/ricventu)
