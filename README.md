@@ -6,7 +6,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
 
 
-A quick and easy way to create the routes is to take advantage of the **convention over configuration** and **PHP attributes**.  
+A quick and easy way to auto generate routes, is to take advantage of the **convention over configuration** and **PHP attributes**.  
 This means that routes are automatically generated based on the directory structure of the controllers and the methods attributes.  
 In this way, you don't have to manually write the routes in the web.php or api.php file, but just follow some rules of file naming and organization.  
 Route groups are base on subdirectories of the controllers.
