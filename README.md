@@ -1,4 +1,4 @@
-# Generate Laravel routes basend on Controllers paths 
+# Convention over configuration Laravel route generator 
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/ricventu/laravel-route-maze/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/ricventu/laravel-route-maze/actions?query=workflow%3Arun-tests+branch%3Amain)
@@ -6,7 +6,7 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
 
 
-A quick and easy way to create the routes is to take advantage of the **convention over configuration** and **PHP attributes**.  
+A quick and easy way to auto generate routes, is to take advantage of the **convention over configuration** and **PHP attributes**.  
 This means that routes are automatically generated based on the directory structure of the controllers and the methods attributes.  
 In this way, you don't have to manually write the routes in the web.php or api.php file, but just follow some rules of file naming and organization.  
 Route groups are base on subdirectories of the controllers.
@@ -29,13 +29,15 @@ class ProductsController
     public function destroy($id) {...}
 }
 ```
+To get routes simpli add the the following line to `routes/web.php`
+
 ```php
     Route::maze(app_path('Http/Controllers'), 'App\\Http\\Controllers');
 ```
 
 The generated routes are:
 ```php
-    Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products.index');
+    Route::get('/some-category/products', 'SomeCategory\ProductsController@index')->name('some-category.products');
     Route::get('/some-category/products/show/{id}', 'SomeCategory\ProductsController@show')->name('some-category.products.show');
     Route::post('/some-category/products/store', 'SomeCategory\ProductsController@store')->name('some-category.products.store');
     Route::Patch('/some-category/products/update/{id}', 'SomeCategory\ProductsController@update')->name('some-category.products.update');
@@ -136,6 +138,10 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 ## Security Vulnerabilities
 
 Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+
+## Performance note
+
+In production deployment, it's recommended to cache route discovering using Laravel `route:cache` built in command
 
 ## Credits
 
