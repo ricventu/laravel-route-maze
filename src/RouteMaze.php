@@ -108,7 +108,17 @@ class RouteMaze
                 $methodName = str($method->getName());
 
                 if ($methodName->is(['__invoke', 'index'])) {
-                    $routes = $this->addRoutesFromAttributes($class, $pathParameters, $method, $classPrefix, $methodName, $namePrefix);
+                    $routes = [];
+                    foreach ($method->getAttributes() as $attribute) {
+                        $attribute = $attribute->newInstance();
+                        if (is_subclass_of($attribute, Method::class)) {
+                            $routes[] = Route::addRoute(
+                                $attribute->getMethods(),
+                                (string) $classPrefix->append($this->getParameters($method, $pathParameters)),
+                                [$class, (string) $methodName]
+                            )->name((string) $classPrefix->prepend($namePrefix));
+                        }
+                    }
                     if (empty($routes)) {
                         // default to get
                         $route = Route::get((string) $classPrefix->append($this->getParameters($method, $pathParameters)), [$class, (string) $methodName]);
