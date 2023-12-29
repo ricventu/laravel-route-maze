@@ -54,7 +54,13 @@ class RouteMaze
                 $parameterName = lcfirst($directoryName->between('_', '_'));
                 $pathParameters->push($parameterName);
                 Route::prefix('{'.$parameterName.'}')
-                    ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
+                    ->group(fn () => $this->registerRoutesWithMiddlewares(
+                        $filesystem,
+                        $subDirectory,
+                        $namespace->append('\\', basename($subDirectory)),
+                        $pathParameters,
+                        empty($namePrefix) ? '' : '.'
+                    ));
             } else {
                 if (isset($config['ignore_path_name']) && $config['ignore_path_name']) {
                     $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters);

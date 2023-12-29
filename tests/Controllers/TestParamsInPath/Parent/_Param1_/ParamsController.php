@@ -1,6 +1,6 @@
 <?php
 
-namespace Ricventu\RouteMaze\Tests\Controllers\TestParamsInPath\_Param1_;
+namespace Ricventu\RouteMaze\Tests\Controllers\TestParamsInPath\Parent\_Param1_;
 
 class ParamsController
 {
