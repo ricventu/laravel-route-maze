@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-route-maze` will be documented in this file.
 
+## v1.1.2 - 2023-12-29
+
+fix parameter lcfirst in namespace
+
 ## v1.1.1 - 2023-11-30
 
 Fix __invoke route
