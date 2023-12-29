@@ -51,7 +51,7 @@ class RouteMaze
             $directoryName = str(basename($subDirectory));
 
             if ($directoryName->startsWith('_') && $directoryName->endsWith('_')) {
-                $parameterName = $directoryName->between('_', '_');
+                $parameterName = lcfirst($directoryName->between('_', '_'));
                 $pathParameters->push($parameterName);
                 Route::prefix('{'.$parameterName.'}')
                     ->group(fn () => $this->registerRoutesWithMiddlewares($filesystem, $subDirectory, $namespace->append('\\', basename($subDirectory)), $pathParameters));
