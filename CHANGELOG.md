@@ -2,6 +2,10 @@
 
 All notable changes to `laravel-route-maze` will be documented in this file.
 
+## v1.1.4 - 2025-02-01
+
+Support Laravel 11
+
 ## v1.1.3 - 2023-12-29
 
 fix param name prefix
