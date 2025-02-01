@@ -1,5 +1,3 @@
-_**This repo is archived, use [spatie/laravel-route-discovery](https://github.com/spatie/laravel-route-discovery) instead**_
-
 # Convention over configuration Laravel route generator 
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/ricventu/laravel-route-maze.svg?style=flat-square)](https://packagist.org/packages/ricventu/laravel-route-maze)
