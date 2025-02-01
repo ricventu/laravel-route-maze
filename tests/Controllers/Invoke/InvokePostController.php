@@ -7,7 +7,5 @@ use Ricventu\RouteMaze\Methods\Post;
 class InvokePostController
 {
     #[Post]
-    public function __invoke()
-    {
-    }
+    public function __invoke() {}
 }

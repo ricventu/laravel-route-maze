@@ -7,7 +7,5 @@ use Ricventu\RouteMaze\Methods\Get;
 class ImplController extends AbstractController
 {
     #[Get]
-    public function show($id)
-    {
-    }
+    public function show($id) {}
 }

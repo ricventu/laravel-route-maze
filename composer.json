@@ -3,8 +3,6 @@
     "description": "A quick and easy way to create the routes is to take advantage of the convention over configuration",
     "keywords": [
         "ricventu",
-        "laravel",
-        "route",
         "laravel-route-maze"
     ],
     "homepage": "https://github.com/ricventu/laravel-route-maze",
@@ -19,7 +17,7 @@
     "require": {
         "php": "^8.1",
         "spatie/laravel-package-tools": "^1.14.0",
-        "illuminate/contracts": "^10.0"
+        "illuminate/contracts": "^10.0|^11.0"
     },
     "require-dev": {
         "laravel/pint": "^1.0",

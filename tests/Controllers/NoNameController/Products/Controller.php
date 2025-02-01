@@ -6,12 +6,8 @@ use Ricventu\RouteMaze\Methods\Get;
 
 class Controller
 {
-    public function index()
-    {
-    }
+    public function index() {}
 
     #[Get]
-    public function listProducts()
-    {
-    }
+    public function listProducts() {}
 }

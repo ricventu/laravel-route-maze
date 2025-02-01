@@ -11,32 +11,20 @@ use Ricventu\RouteMaze\Methods\Put;
 
 class ProductsController
 {
-    public function index()
-    {
-    }
+    public function index() {}
 
     #[Get]
-    public function show($id)
-    {
-    }
+    public function show($id) {}
 
     #[Post]
-    public function store(Request $request)
-    {
-    }
+    public function store(Request $request) {}
 
     #[Patch]
-    public function update($id, Request $request)
-    {
-    }
+    public function update($id, Request $request) {}
 
     #[Put]
-    public function set($id, Request $request)
-    {
-    }
+    public function set($id, Request $request) {}
 
     #[Delete]
-    public function destroy($id)
-    {
-    }
+    public function destroy($id) {}
 }
